@@ -7,6 +7,7 @@
  */
 package org.eclipse.rdf4j.sail.lucene;
 
+import org.eclipse.rdf4j.sail.lucene.helper.ProvidesTempFolder;
 import static org.eclipse.rdf4j.sail.lucene.LuceneSailSchema.MATCHES;
 import static org.eclipse.rdf4j.sail.lucene.LuceneSailSchema.PROPERTY;
 import static org.eclipse.rdf4j.sail.lucene.LuceneSailSchema.QUERY;
@@ -56,11 +57,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class AbstractLuceneSailTest {
+public abstract class AbstractLuceneSailTest extends ProvidesTempFolder {
 
 	@Rule
 	public Timeout timeout = new Timeout(10, TimeUnit.MINUTES);
+
+	private Logger log = LoggerFactory.getLogger(getClass());
 
 	protected static final ValueFactory vf = SimpleValueFactory.getInstance();
 
@@ -115,7 +120,6 @@ public abstract class AbstractLuceneSailTest {
 		// TODO: disable logging for org.eclipse.rdf4j.query.parser.serql.SeRQLParser,
 		// which is not possible
 		// to configure using just the Logger
-
 		// setup a LuceneSail
 		MemoryStore memoryStore = new MemoryStore();
 		// enable lock tracking
@@ -126,6 +130,9 @@ public abstract class AbstractLuceneSailTest {
 
 		// create a Repository wrapping the LuceneSail
 		repository = new SailRepository(sail);
+
+		// create and load data dir
+		repository.setDataDir(getFolder());
 		repository.initialize();
 
 		// add some statements to it
@@ -1059,7 +1066,9 @@ public abstract class AbstractLuceneSailTest {
 		final Set<Throwable> exceptions = ConcurrentHashMap.newKeySet();
 		for (int i = 0; i < numThreads; i++) {
 			new Thread(new Runnable() {
+
 				private long iterationCount = 10 + Math.round(Math.random() * 100);
+
 				public void run() {
 					try (RepositoryConnection con = repository.getConnection()) {
 						startLatch.await();

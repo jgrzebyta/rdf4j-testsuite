@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.rdf4j.sail.lucene;
 
+import org.eclipse.rdf4j.sail.lucene.helper.ProvidesTempFolder;
 import static org.eclipse.rdf4j.sail.lucene.LuceneSailSchema.MATCHES;
 import static org.eclipse.rdf4j.sail.lucene.LuceneSailSchema.PROPERTY;
 import static org.eclipse.rdf4j.sail.lucene.LuceneSailSchema.QUERY;
@@ -23,7 +24,6 @@ import java.util.Properties;
 
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.ValueFactory;
-import org.eclipse.rdf4j.model.impl.SimpleLiteral;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.query.BindingSet;
@@ -36,15 +36,14 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
-import org.eclipse.rdf4j.sail.lucene.LuceneSail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractLuceneSailIndexedPropertiesTest {
+public abstract class AbstractLuceneSailIndexedPropertiesTest extends ProvidesTempFolder {
 
-	private static ValueFactory vf = SimpleValueFactory.getInstance();
+	private static final ValueFactory vf = SimpleValueFactory.getInstance();
 
 	protected LuceneSail sail;
 
@@ -99,6 +98,7 @@ public abstract class AbstractLuceneSailIndexedPropertiesTest {
 
 		// create a Repository wrapping the LuceneSail
 		repository = new SailRepository(sail);
+		repository.setDataDir(getFolder());
 		repository.initialize();
 
 		// add some statements to it

@@ -7,6 +7,7 @@
  *******************************************************************************/
 package org.eclipse.rdf4j.sail.lucene;
 
+import org.eclipse.rdf4j.sail.lucene.helper.ProvidesTempFolder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -32,13 +33,12 @@ import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.RepositoryException;
 import org.eclipse.rdf4j.repository.sail.SailRepository;
-import org.eclipse.rdf4j.sail.lucene.LuceneSail;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class AbstractLuceneSailGeoSPARQLTest {
+public abstract class AbstractLuceneSailGeoSPARQLTest extends ProvidesTempFolder {
 
 	public static final URI SUBJECT_1 = new URIImpl("urn:subject1");
 
@@ -98,6 +98,7 @@ public abstract class AbstractLuceneSailGeoSPARQLTest {
 
 		// create a Repository wrapping the LuceneSail
 		repository = new SailRepository(sail);
+		repository.setDataDir(getFolder());
 		repository.initialize();
 
 		// add some statements to it
