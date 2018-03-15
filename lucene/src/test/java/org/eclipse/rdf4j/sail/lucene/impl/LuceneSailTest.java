@@ -7,20 +7,38 @@
  */
 package org.eclipse.rdf4j.sail.lucene.impl;
 
+import java.io.File;
 import java.io.IOException;
 import org.eclipse.rdf4j.sail.lucene.AbstractLuceneSailTest;
 import org.eclipse.rdf4j.sail.lucene.LuceneSail;
+import org.junit.Assert;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Jacek Grzebyta
  */
 public class LuceneSailTest extends AbstractLuceneSailTest {
 
+	public static final String LUCENE_LOCATION = ".sail-index";
+
+	private Logger log = LoggerFactory.getLogger(getClass());
+
 	@Override
 	protected void configure(LuceneSail sail)
 		throws IOException
 	{
-		sail.setParameter(LuceneSail.LUCENE_DIR_KEY, ".sail-index");
+		sail.setParameter(LuceneSail.LUCENE_DIR_KEY, LUCENE_LOCATION);
 		sail.setParameter(LuceneSail.INDEX_CLASS_KEY, LuceneSail.DEFAULT_INDEX_CLASS);
 	}
+
+	@Test
+	public void testSailIndex()
+		throws Exception
+	{
+		String lucenePath = repository.getDataDir().getAbsolutePath() + "/" + LUCENE_LOCATION;
+                log.debug("Lucene path location: {}", lucenePath);
+                Assert.assertTrue(new File(lucenePath).exists());
+        }
 }
